@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native'
 import { ListItem, Icon } from 'react-native-elements'
 import Modal from '../Modal';
 import ChangeDisplayNameForm from './ChangeDisplayNameForm';
+import ChangeEmailForm from './ChangeEmailForm';
 
 export default function AccountOptions({ userInfo, toastRef, setReloadUserInfo }) {
     const [showModal, setShowModal] = useState(false)
@@ -24,7 +25,12 @@ export default function AccountOptions({ userInfo, toastRef, setReloadUserInfo }
 
             case 'email':
                 setRenderComponent(
-                    <Text>Cambiar email</Text>
+                    <ChangeEmailForm
+                        email={userInfo.email}
+                        setShowModal={setShowModal}
+                        toastRef={toastRef}
+                        setReloadUserInfo={setReloadUserInfo}
+                    />
                 )
                 setShowModal(true)
                 break;
