@@ -1,9 +1,13 @@
 import { useNavigation } from '@react-navigation/native';
-import React from 'react'
+import React, { useRef } from 'react'
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native'
+import Toast from 'react-native-easy-toast';
 import { Divider } from "react-native-elements";
+import LoginForm from '../../components/Account/LoginForm';
 
 export default function Login() {
+    const toastRef = useRef()
+
     return (
         <ScrollView>
             <Image
@@ -12,13 +16,12 @@ export default function Login() {
                 style={styles.logo}
             />
             <View style={styles.viewContainer}>
-                <Text>
-                    Login FORM
-                </Text>
+                <LoginForm toastRef={toastRef} />
                 <CreateAccount />
             </View>
             <Divider style={styles.divider} color='#00a680' />
             <Text>Social login</Text>
+            <Toast ref={toastRef} position='center' opacity={0.9} />
         </ScrollView>
     )
 }
