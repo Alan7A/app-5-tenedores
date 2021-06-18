@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import { ListItem, Icon } from 'react-native-elements'
 import Modal from '../Modal';
 import ChangeDisplayNameForm from './ChangeDisplayNameForm';
 import ChangeEmailForm from './ChangeEmailForm';
+import ChangePasswordForm from './ChangePasswordForm';
 
 export default function AccountOptions({ userInfo, toastRef, setReloadUserInfo }) {
     const [showModal, setShowModal] = useState(false)
@@ -37,7 +38,11 @@ export default function AccountOptions({ userInfo, toastRef, setReloadUserInfo }
 
             case 'password':
                 setRenderComponent(
-                    <Text>Cambiar password</Text>
+                    <ChangePasswordForm
+                        email={userInfo.email}
+                        setShowModal={setShowModal}
+                        toastRef={toastRef}
+                    />
                 )
                 setShowModal(true)
                 break;
