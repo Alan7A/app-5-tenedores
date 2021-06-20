@@ -4,6 +4,9 @@ import { Input, Button, Icon, Avatar, Image } from "react-native-elements";
 import * as MediaLibrary from 'expo-media-library'
 import * as ImagePicker from 'expo-image-picker'
 import * as Location from 'expo-location'
+import * as firebase from 'firebase/app'
+import 'firebase/storage'
+import uuid from 'random-uuid-v4'
 import MapView, { Marker } from 'react-native-maps'
 import Modal from '../Modal'
 
@@ -18,12 +21,23 @@ export default function AddRestaurantForm({ toastRef, setIsLoading, navigation }
     const [restaurantLocation, setRestaurantLocation] = useState(null)
 
     const addRestaurant = () => {
-        console.log(imagesSelected);
+        if (!restaurantName || !restaurantAddress || !restaurantDescription) {
+            toastRef.current.show('Todos los campos del formulario son obligatorios')
+        } else if (imagesSelected.length === 0) {
+            toastRef.current.show('El restaurante tiene que tener al menos una foto')
+        } else if (!restaurantLocation) {
+            toastRef.current.show('Tienes que localizar el restaurante en el mapa')
+        } else {
+            uploadRestaurantImages().then(images => {
+                setIsLoading(true)
+                console.log(images);
+                setIsLoading(false)
+            })
+        }
     }
 
     const selectImage = async () => {
         const resultPermission = await MediaLibrary.requestPermissionsAsync()
-        console.log(resultPermission);
 
         if (resultPermission.status === 'denied') {
             toastRef.current.show('Es necesario aceptar los permisos de la galería', 3000)
@@ -58,6 +72,26 @@ export default function AddRestaurantForm({ toastRef, setIsLoading, navigation }
         )
     }
 
+    const uploadRestaurantImages = async () => {
+        const imagesBlob = []
+
+        await Promise.all(
+            imagesSelected.map(async (image) => {
+                const response = await fetch(image)
+                const blob = await response.blob()
+                const ref = firebase.default.storage().ref('restaurants').child(uuid())
+                await ref.put(blob).then(async result => {
+                    await firebase.default.storage().ref(`restaurants/${result.metadata.name}`).getDownloadURL()
+                        .then(photoUrl => {
+                            imagesBlob.push(photoUrl)
+                        })
+                })
+            })
+        )
+
+        return imagesBlob
+    }
+
     return (
         <ScrollView style={styles.scrollView}>
             <View style={styles.viewPhoto}>
@@ -80,7 +114,7 @@ export default function AddRestaurantForm({ toastRef, setIsLoading, navigation }
                     rightIcon={{
                         type: 'material-community',
                         name: 'google-maps',
-                        color: '#c2c2c2',
+                        color: restaurantLocation ? '#00a680' : '#c2c2c2',
                         onPress: () => setIsMapVisible(true)
                     }}
                 />
