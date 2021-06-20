@@ -291,7 +291,8 @@ const styles = StyleSheet.create({
     thumbnail: {
         width: 70,
         height: 70,
-        marginRight: 10
+        marginRight: 10,
+        marginBottom:20
     },
     viewPhoto: {
         alignItems: 'center',
