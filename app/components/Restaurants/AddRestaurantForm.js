@@ -4,11 +4,15 @@ import { Input, Button, Icon, Avatar, Image } from "react-native-elements";
 import * as MediaLibrary from 'expo-media-library'
 import * as ImagePicker from 'expo-image-picker'
 import * as Location from 'expo-location'
-import * as firebase from 'firebase/app'
+import { firebaseApp } from "../../utils/firebase";
+import * as firebase from 'firebase'
 import 'firebase/storage'
+import 'firebase/firestore'
 import uuid from 'random-uuid-v4'
 import MapView, { Marker } from 'react-native-maps'
 import Modal from '../Modal'
+
+const db = firebase.default.firestore(firebaseApp)
 
 const screenWidth = Dimensions.get('window').width
 
@@ -28,10 +32,28 @@ export default function AddRestaurantForm({ toastRef, setIsLoading, navigation }
         } else if (!restaurantLocation) {
             toastRef.current.show('Tienes que localizar el restaurante en el mapa')
         } else {
+            setIsLoading(true)
             uploadRestaurantImages().then(images => {
-                setIsLoading(true)
-                console.log(images);
-                setIsLoading(false)
+                db.collection('restaurants').add({
+                    name: restaurantName,
+                    address: restaurantAddress,
+                    description: restaurantDescription,
+                    location: restaurantLocation,
+                    images: images,
+                    rating: 0,
+                    ratingCount: 0,
+                    createdAt: new Date(),
+                    createdBy: firebase.default.auth().currentUser.uid
+                })
+                .then(() => {
+                    setIsLoading(false)
+                    navigation.navigate('Restaurants')
+                })
+                .catch((err) => {
+                    setIsLoading(false)
+                    console.log(err);
+                    toastRef.current.show('Error al crear el restaurante, intentalo más tarde')
+                })
             })
         }
     }
