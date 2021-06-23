@@ -1,14 +1,17 @@
 import React from 'react'
 import { StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native'
 import { Image } from 'react-native-elements'
+import { useNavigation } from '@react-navigation/native'
 
 export default function RestaurantsList({ restaurants, handleLoadMore, isLoading }) {
+    const navigation = useNavigation()
+
     return (
         <View>
             {restaurants.length > 0 ? (
                 <FlatList
                     data={restaurants}
-                    renderItem={(restaurant) => <RestaurantItem restaurant={restaurant} />}
+                    renderItem={(restaurant) => <RestaurantItem restaurant={restaurant} navigation={navigation} />}
                     keyExtractor={(item, i) => i.toString()}
                     ListFooterComponent={<ListFooter isLoading={isLoading} />}
                     onEndReachedThreshold={0.5}
@@ -24,11 +27,14 @@ export default function RestaurantsList({ restaurants, handleLoadMore, isLoading
     )
 }
 
-function RestaurantItem({ restaurant }) {
-    const { images, name, address, description } = restaurant.item
+function RestaurantItem({ restaurant, navigation }) {
+    const { images, id, name, address, description } = restaurant.item
 
     const openRestaurant = () => {
-        console.log('abierto');
+        navigation.navigate('Restaurant', {
+            id,
+            name
+        })
     }
 
     return (
