@@ -1,12 +1,14 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react'
+import React, { useState, useCallback, useLayoutEffect } from 'react'
 import { StyleSheet, ScrollView, Dimensions, View, Text } from 'react-native'
 import { Rating, ListItem, Icon } from "react-native-elements";
+import { useFocusEffect } from '@react-navigation/native';
 import { firebaseApp } from "../../utils/firebase";
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import Loading from "../../components/Loading";
 import CarouselComponent from "../../components/CarouselComponent";
 import Map from '../../components/Map';
+import ReviewsList from '../../components/Restaurants/ReviewsList';
 
 const db = firebase.firestore(firebaseApp)
 const screenWidth = Dimensions.get('window').width
@@ -20,19 +22,21 @@ export default function Restaurant({ navigation, route }) {
         navigation.setOptions({ title: name })
     })
 
-    useEffect(() => {
-        db.collection('restaurants').doc(id).get()
-            .then((response) => {
-                const data = response.data()
-                data.id = id
-                setRestaurant(data)
-                setRating(data.rating)
-            })
-    }, [])
+    useFocusEffect(
+        useCallback(() => {
+            db.collection('restaurants').doc(id).get()
+                .then((response) => {
+                    const data = response.data()
+                    data.id = id
+                    setRestaurant(data)
+                    setRating(data.rating)
+                })
+        }, [])
+    );
 
     const listInfo = [
         {
-            text: restaurant.address,
+            text: restaurant?.address,
             iconType: 'material-community',
             iconName: 'map-marker',
             action: null
@@ -89,6 +93,12 @@ export default function Restaurant({ navigation, route }) {
                     </ListItem>
                 ))}
             </View>
+
+            <ReviewsList
+                navigation={navigation}
+                id={restaurant.id}
+                setRating={setRating}
+            />
         </ScrollView>
     )
 }

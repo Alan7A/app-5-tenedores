@@ -41,6 +41,7 @@ export default function AddRestaurantForm({ toastRef, setIsLoading, navigation }
                     location: restaurantLocation,
                     images: images,
                     rating: 0,
+                    ratingTotal: 0,
                     ratingCount: 0,
                     createdAt: new Date(),
                     createdBy: firebase.default.auth().currentUser.uid
