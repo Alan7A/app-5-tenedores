@@ -1,4 +1,4 @@
-#App 5 Tenedores React Native
+# App 5 Tenedores React Native
 
 Aplicación tipo TripAdvisor de restaurantes creada con React Native y Expo.
 
