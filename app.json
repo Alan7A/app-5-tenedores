@@ -22,14 +22,25 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#00a680"
       },
       "permissions": [
-        "CAMERA_ROLL"
-      ]
+        "CAMERA_ROLL",
+        "LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ],
+      "package": "com.ghostdl07.app5tenedores",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCGES3a7Ix_Kw_qACPwVfpyoXImyKGbL9g"
+        }
+      },
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "description": "Aplicación tipo TripAdvisor de restaurantes creada con React Native y Expo"
   }
 }
